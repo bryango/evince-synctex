@@ -115,6 +115,7 @@ listen() {
     dbus-monitor "type=signal,interface=org.gnome.evince.Window,member=SyncSource" |
     while read -r line
     do
+        >&2 echo "$line"
         parts=($line)
 
         if [ "${parts[0]}" == signal ]; then
@@ -132,7 +133,7 @@ listen() {
             filename=${filename/#\"file:\/\//} # strips the leading '"file://'
             filename=${filename/%\"/}          # strips the trailing '"'
             echo "Filename: $filename"
-            echo "Line number: $linenr"
+            echo "Line: $linenr"
 
             for i in "${!exc_cmd[@]}"; do
                 # Do all replacements here
@@ -143,6 +144,8 @@ listen() {
             echo "Executing: '${exc_cmd[*]}'"
 
             "${exc_cmd[@]}" < /dev/null
+
+            echo "=================================================="
         fi
     done
 }
